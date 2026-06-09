@@ -1,0 +1,48 @@
+openapi: 3.1.0
+info:
+  title: Etymolt API
+  description: |
+    The Etymolt verification API. Issues EVP/1-conformant verdicts across
+    five canonical axes (trademark, domain, cultural, sound, pronunciation).
+
+    See the EVP/1 protocol spec at https://github.com/etymolt/evp-spec for the
+    full wire-format contract.
+  version: 1.0.0
+  contact:
+    email: hello@etymolt.com
+    url: https://etymolt.com
+  license:
+    name: Proprietary (the API itself; specifications are CC-BY-4.0)
+servers:
+  - url: https://api.etymolt.com
+    description: Production
+
+paths:
+  /v1/verify:
+    post:
+      summary: Issue an EVP/1 verdict for a candidate name
+      operationId: verify
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  example: "Stratagem"
+                nice_classes:
+                  type: array
+                  items: { type: integer }
+                  example: [9, 42]
+      responses:
+        '200':
+          description: An EVP/1 verdict
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/etymolt/evp-spec/main/spec/evp-1.schema.json'
+
+components: {}
