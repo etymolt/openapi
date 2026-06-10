@@ -17,9 +17,9 @@ jobs:
         id: find
         shell: bash
         run: |
-          for candidate in latest/openapi.yaml latest/openapi.yml openapi.yaml openapi.yml; do
-            if [ -f "$candidate" ]; then echo "spec=$candidate" >> $GITHUB_OUTPUT; exit 0; fi
+          for c in latest/openapi.yaml latest/openapi.yml openapi.yaml openapi.yml; do
+            if [ -f "$c" ]; then echo "spec=$c" >> $GITHUB_OUTPUT; exit 0; fi
           done
           echo "No OpenAPI spec found"; exit 1
       - name: Spectral lint
-        run: npx --yes @stoplight/spectral-cli lint "${{ steps.find.outputs.spec }}" --fail-severity=error
+        run: npx --yes @stoplight/spectral-cli lint "${{ steps.find.outputs.spec }}" --ruleset .spectral.yaml --fail-severity=error
