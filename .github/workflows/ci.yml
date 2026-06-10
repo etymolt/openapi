@@ -1,0 +1,25 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  spectral:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Find OpenAPI spec
+        id: find
+        shell: bash
+        run: |
+          for c in latest/openapi.yaml latest/openapi.yml openapi.yaml openapi.yml; do
+            if [ -f "$c" ]; then echo "spec=$c" >> $GITHUB_OUTPUT; exit 0; fi
+          done
+          echo "No OpenAPI spec found"; exit 1
+      - name: Spectral lint
+        run: npx --yes @stoplight/spectral-cli lint "${{ steps.find.outputs.spec }}" --ruleset .spectral.yaml --fail-severity=error
